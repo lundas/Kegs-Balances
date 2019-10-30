@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from selenium import webdriver
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.firefox.options import Options
@@ -10,28 +9,45 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchFrameException
 from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.common.exceptions import InsecureCertificateException
+from selenium.common.exceptions import UnexpectedAlertPresentException
 from datetime import datetime
 import time
+import logging
+
+# Set up logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+# Create file handler
+fh = logging.FileHandler('DeliveryFormat/deliveryformat.log') # PATH to file on local machine
+fh.setLevel(logging.INFO)
+# Create formatter
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# Add formatter to fh
+fh.setFormatter(formatter)
+# Add fh to logger
+logger.addHandler(fh)
 
 class EkosSelenium:
 	'''Class for accessing and downloading items from Ekos using 
 	Selenium Webdriver'''
 	# Firefox Settings. Need to import from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
-	gPATH = '/home/lund/downloads/geckodriver'
+	gPATH = '/PATH/TO/DRIVER'
 
 	# FIREFOX PROFILE - PREVENTS DOWNLOAD DIALOGS
 	profile = FirefoxProfile()
 	profile.set_preference("browser.download.folderList", 2)  #set download location as custom dir
-	profile.set_preference("browser.download.dir", '/home/lund/downloads/')  #sets custom dir - NEED PATH ON LOCAL MACHINE
+	profile.set_preference("browser.download.dir", '/PATH/TO/LOCATION/')  #sets custom dir - NEED PATH ON LOCAL MACHINE
 	profile.set_preference("browser.helperApps.neverAsk.openFile","text/csv,application/vnd.ms-excel")
 	profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv,application/vnd.ms-excel")
 
 	# Firefox Options - Allows Firefox to run in headless mode
 	options = Options()
 	options.add_argument('-headless')
-	options.set_headless(headless=True)
 
-	browser = webdriver.Firefox(firefox_profile = profile, executable_path = gPATH, firefox_options = options)
+	browser = webdriver.Firefox(firefox_profile = profile, 
+	#	                        executable_path = gPATH,
+		                        firefox_options = options)
 
 	# chrome_options = Options()
 	# chrome_options.add_argument('--headless')
@@ -39,11 +55,14 @@ class EkosSelenium:
 
 	# browser = webdriver.Chrome()
 
+	# def __init__(self):
+	# 	self.logger = logging.getLogger(__name__)
+
 	def login(self, username, password):
 		'''logs in to Ekos using credentials provided by user
 			handle any alerts that may occur during log in'''
 		#open webdriver, go to Ekos login page
-		print("Logging in to Ekos")
+		logger.info('Logging in to Ekos')
 		browser = EkosSelenium.browser
 		browser.get('https://login.goekos.com/default.aspx')
 		assert "Ekos" in browser.title
@@ -62,11 +81,11 @@ class EkosSelenium:
 				)
 			alert = browser.switch_to.alert()
 			alert.accept()
-			print("Alert Accepted")
+			logger.info("Alert Accepted")
 		except TimeoutException:
-			print("No Alert")
+			logger.info("No Alert")
 
-		print("Login Successful")
+		logger.info("Login Successful")
 
 		return
 
@@ -80,9 +99,9 @@ class EkosSelenium:
 				)
 			alert = browser.switch_to.alert()
 			alert.accept()
-			print("Alert Accepted")
+			logger.info("Alert Accepted")
 		except TimeoutException:
-			print("No Alert")
+			logger.info("No Alert")
 		#Get and click on Reports Tab
 		elem = WebDriverWait(browser, 10).until(
 			EC.element_to_be_clickable((By.LINK_TEXT, 'Reports'))
@@ -92,7 +111,7 @@ class EkosSelenium:
 		#Click reportname link
 		while True:
 			try:
-				print("Downloading %s as csv" % str(reportname))
+				logger.info("Downloading %s as csv" % str(reportname))
 				elem = WebDriverWait(browser, 10).until(
 					EC.element_to_be_clickable((By.LINK_TEXT, reportname))
 					)
@@ -118,12 +137,19 @@ class EkosSelenium:
 				elem = browser.find_element_by_class_name('formClose')
 				elem.click()
 			except NoSuchFrameException:
-				print('NoSuchFrameException: Restarting DL process')
+				logger.warning('NoSuchFrameException: Restarting DL process')
 			except ElementClickInterceptedException:
-				print('ElementClickInterceptedException: Closing iframe')
+				logger.warning('ElementClickInterceptedException: Closing iframe')
 				browser.switch_to.default_content()
 				elem = browser.find_element_by_class_name('formClose')
 				elem.click()
+			except InsecureCertificateException:
+				logger.warning('Insecure Certificate Exception. Ending browser session')
+				self.browser.quit()
+			except UnexpectedAlertPresentException:
+				alert = browser.switch_to.alert()
+				alert.accept()
+				logger.warning('Unexpected Alert Accepted')
 			else:
 				break
 
