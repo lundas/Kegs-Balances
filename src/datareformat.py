@@ -83,11 +83,17 @@ try:
 			df['Due Date'] = pd.to_datetime(df['Due Date'])
 
 			# Add conditional Status column
-			# "Credit Hold Next Week" for future due dates
-			# "Balance Overdue" for past due dates
+			# "Credit Hold Pending" for due dates passed 30 days due
+			# "Newly Overdue" for due dates last week
+			# "Overdue" for all others
 			logger.debug('Creating Status Column')
-			df['Balance Status'] = ['Overdue Next Week' if x > pd.datetime.today() \
-									else 'Balance Overdue' for x in df['Due Date']]
+			df['Balance Status'] = ['Credit Hold Pending' if x < (pd.datetime.today() - pd.Timedelta(days= 30)) 
+                        else 'Newly Overdue' if x > (pd.datetime.today() - pd.Timedelta(days=7))
+                        else 'Overdue' for x in df['Due Date']]
+            # Change Balance Status Column to reflect current credit holds and inactive accts
+            logger.debug('Updating Status Column')
+			df.loc[df['Ekos Status'] == 'Credit Hold', 'Balance Status'] = 'Credit Hold'
+			df.loc[df['Ekos Status'] == 'Inactive', 'Balance Status'] = 'Inactive'
 
 			# Split data by Sales Rep and write to csvs
 			logger.debug('Writing updated %s to Sales Rep csvs' % filename)
