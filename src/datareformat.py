@@ -86,7 +86,7 @@ try:
 			# "Credit Hold Next Week" for future due dates
 			# "Balance Overdue" for past due dates
 			logger.debug('Creating Status Column')
-			df['Balance Status'] = ['Credit Hold Next Week' if x > pd.datetime.today() \
+			df['Balance Status'] = ['Overdue Next Week' if x > pd.datetime.today() \
 									else 'Balance Overdue' for x in df['Due Date']]
 
 			# Split data by Sales Rep and write to csvs
