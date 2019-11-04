@@ -52,7 +52,7 @@ class RenameFile:
 		for l in os.listdir(PATH):
 			if filename_regex.match(l) != None:
 				filename = filename_regex.match(l).string
+				os.rename(PATH + filename, PATH + new_filename)
 			else:
 				logger.info('No file matching regular expression')
-		os.rename(PATH + filename, PATH + new_filename)
 		return
