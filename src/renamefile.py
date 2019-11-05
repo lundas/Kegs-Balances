@@ -48,11 +48,13 @@ class RenameFile:
 	def rename_file(self, new_filename, PATH):
 		'''Searches for the downloaded csv file based on a regular expression
 		and replaces that filename with a filename provided '''
-		filename_regex = re.compile('Export_\d\d\d\d\d\d\d\d\d\d\d\d\d\d_\.csv')
+		filename_regex = re.compile('Export_\d{14}_\.csv')
 		for l in os.listdir(PATH):
 			if filename_regex.match(l) != None:
+				logger.info('File found!')
 				filename = filename_regex.match(l).string
 				os.rename(PATH + filename, PATH + new_filename)
+				break
 			else:
-				logger.info('No file matching regular expression')
+				logger.info('File does not match regex. Checking next file')
 		return
