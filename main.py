@@ -38,6 +38,7 @@ ePassword = config['ekos_pw']
 PATH = config['PATH']	# PATH on local machine
 empties = 'Kegs At Customers - Pivoted by Keg Type/Quantity [Script Report]'
 overdue_bals = 'Invoice - Overdue Balances Summed by Company'
+today = date.today()
 
 # Send email
 message = 'Attached you\'ll find two reports: \n\n'
@@ -52,16 +53,23 @@ emailTo = config['email_list']
 emailFrom = config['email_user']
 password = config['email_pw']
 
-# Ekos login
-ekos.login(eUsername, ePassword)
+try:
+	# Ekos login
+	ekos.login(eUsername, ePassword)
 
-# Download and rename empties report
-r1time = ekos.download_report(empties)
-rename.rename_file(empties+'.csv', PATH)
-# Download and rename Overdue Balances report
-r2time = ekos.download_report(overdue_bals)
-rename.rename_file(overdue_bals+'.csv', PATH)
+	# Download and rename empties report
+	r1time = ekos.download_report(empties)
+	rename.rename_file(empties+'.csv', PATH)
+	# Download and rename Overdue Balances report
+	r2time = ekos.download_report(overdue_bals)
+	rename.rename_file(overdue_bals+'.csv', PATH)
 
-# Reformat Data
-reformat.data_reformat_empties(PATH, 'empties.csv')
-reformat.data_reformat_overdue(PATH, 'overdue_bals.csv')
+	# Quit Ekos
+	ekos.quit()
+
+	# Reformat Data
+	reformat.data_reformat_empties(PATH, 'empties.csv')
+	reformat.data_reformat_overdue(PATH, 'overdue_bals.csv')
+except Exception as e:
+	ekos.quit()
+    logger.error(e, exc_info=True)
