@@ -51,7 +51,7 @@ class RenameFile:
 		filename_regex = re.compile('Export_\d{14}_\.csv')
 		for l in os.listdir(PATH):
 			if filename_regex.match(l) != None:
-				logger.info('File found!')
+				logger.info('File found! Renaming file %s' % new_filename)
 				filename = filename_regex.match(l).string
 				os.rename(PATH + filename, PATH + new_filename)
 				break
