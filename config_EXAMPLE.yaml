@@ -1,0 +1,9 @@
+PATH: /PATH/TO/FILES/
+ekos_pw: EKOS PASSWORD
+ekos_user: EKOS USERNAME
+email_list:
+- LIST
+- OF
+- EMAILS
+email_pw: EMAIL PASSWORD
+email_user: EMAIL USERNAME

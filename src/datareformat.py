@@ -23,7 +23,7 @@ try:
 
 		def data_reformat_empties(self, PATH, filename):
 			# Reformats data from "Kegs At Customers - Pivoted by Keg 
-			# Type/Quantity [Script Report]"" report from Ekos
+			# Type/Quantity [Script Report]" report from Ekos
 			
 			logger.info('Reformatting %s data' % filename)
 
