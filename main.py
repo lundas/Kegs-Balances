@@ -29,14 +29,14 @@ email = sendemail.SendEmail()
 
 # Define variables
 # Config
-conf_file ='./Kegs-Balances/config_EXAMPLE.yaml' #PATH to config file
+conf_file ='.s/Kegs-Balances/config_EXAMPLE.yaml' #PATH to config file
 stream = file(conf_file, 'r')
 config = yaml.safe_load(stream)
 
 # Ekos
 eUsername = config['ekos_user']
 ePassword = config['ekos_pw']
-PATH = config['PATH']	# PATH on local machine
+PATH = config['PATH']   # PATH on local machine
 empties = 'Kegs At Customers - [Script Report]'
 overdue_bals = 'Invoice - Overdue Balances Summed by Company'
 today = date.today()
@@ -58,22 +58,22 @@ emailFrom = config['email_user']
 password = config['email_pw']
 
 try:
-	# Ekos login
-	ekos.login(eUsername, ePassword)
+    # Ekos login
+    ekos.login(eUsername, ePassword)
 
-	# Download and rename empties report
-	r1time = ekos.download_report(empties)
-	rename.rename_file('empties.csv', PATH)
-	# Download and rename Overdue Balances report
-	r2time = ekos.download_report(overdue_bals)
-	rename.rename_file('overdue_bals.csv', PATH)
+    # Download and rename empties report
+    r1time = ekos.download_report(empties)
+    rename.rename_file('empties.csv', PATH)
+    # Download and rename Overdue Balances report
+    r2time = ekos.download_report(overdue_bals)
+    rename.rename_file('overdue_bals.csv', PATH)
 
-	# Quit Ekos
-	ekos.quit()
+    # Quit Ekos
+    ekos.quit()
 
-	# Reformat Data
-	reformat.data_reformat_empties(PATH, 'empties.csv')
-	reformat.data_reformat_overdue(PATH, 'overdue_bals.csv')
+    # Reformat Data
+    reformat.data_reformat_empties(PATH, 'empties.csv')
+    reformat.data_reformat_overdue(PATH, 'overdue_bals.csv')
 
     # Send emails
     for email_to in emailTo:
@@ -91,5 +91,5 @@ try:
 
 
 except Exception as e:
-	ekos.quit()
+    ekos.quit()
     logger.error(e, exc_info=True)
