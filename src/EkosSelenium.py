@@ -131,7 +131,7 @@ class EkosSelenium:
 					)
 				# time.sleep(5)
 				elem.click()
-				# time.sleep(5)
+				time.sleep(20)
 				#close iframe
 				browser.switch_to.default_content()
 				elem = browser.find_element_by_class_name('formClose')
