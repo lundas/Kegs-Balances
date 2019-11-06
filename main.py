@@ -37,7 +37,7 @@ config = yaml.safe_load(stream)
 eUsername = config['ekos_user']
 ePassword = config['ekos_pw']
 PATH = config['PATH']	# PATH on local machine
-empties = 'Kegs At Customers - Pivoted by Keg Type/Quantity [Script Report]'
+empties = 'Kegs At Customers - [Script Report]'
 overdue_bals = 'Invoice - Overdue Balances Summed by Company'
 today = date.today()
 
@@ -45,7 +45,7 @@ today = date.today()
 message = 'Attached you\'ll find two reports: \n\n'
 message += '1. Empties.csv -- details accounts with empty kegs that have not '
 message += 'ordered within the last 30 days. \n'
-message += '2. OverdueBalances.csv -- details accounts with balances that are'
+message += '2. Balances.csv -- details accounts with balances that are'
 message += ' newly overdue, have been overdue, or are pending a credit hold. \n\n'
 message += 'Please address any questions regarding balances to Amelia. If you\'re'
 message += ' experiencing technical problems with this email, please contact Lund.'
@@ -79,7 +79,7 @@ try:
         fileToSend = []
         # collect reports for given name
         for f in os.listdir(PATH):
-            if name in f.lower:
+            if name in f.lower():
                 fileToSend.append(PATH+f)
         # send email with collected reports attached
         email.send_email(message, subject, email_to, \
