@@ -6,6 +6,7 @@ from src import datareformat
 from src import sendemail
 import yaml
 from datetime import date
+import os
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -28,7 +29,7 @@ email = sendemail.SendEmail()
 
 # Define variables
 # Config
-conf_file ='./config_EXAMPLE.yaml' #PATH to config file
+conf_file ='./Kegs-Balances/config_EXAMPLE.yaml' #PATH to config file
 stream = file(conf_file, 'r')
 config = yaml.safe_load(stream)
 
@@ -59,10 +60,10 @@ try:
 
 	# Download and rename empties report
 	r1time = ekos.download_report(empties)
-	rename.rename_file(empties+'.csv', PATH)
+	rename.rename_file('empties.csv', PATH)
 	# Download and rename Overdue Balances report
 	r2time = ekos.download_report(overdue_bals)
-	rename.rename_file(overdue_bals+'.csv', PATH)
+	rename.rename_file('overdue_bals.csv', PATH)
 
 	# Quit Ekos
 	ekos.quit()
@@ -70,6 +71,22 @@ try:
 	# Reformat Data
 	reformat.data_reformat_empties(PATH, 'empties.csv')
 	reformat.data_reformat_overdue(PATH, 'overdue_bals.csv')
+
+    # Send emails
+    for email_to in emailTo:
+        # split emails to get names
+        name = email.split('@')[0]
+        fileToSend = []
+        # collect reports for given name
+        for f in os.listdir(PATH):
+            if name in f.lower:
+                fileToSend.append(PATH+f)
+        # send email with collected reports attached
+        email.send_email(message, subject, email_to, \
+            emailFrom, password, fileToSend)
+
+
+
 except Exception as e:
 	ekos.quit()
     logger.error(e, exc_info=True)
