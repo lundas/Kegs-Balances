@@ -1,4 +1,4 @@
-#! /usr/bin/env/ python
+#! /usr/bin/env/python
 import logging
 from src import EkosSelenium
 from src import renamefile
@@ -47,6 +47,9 @@ message += '1. Empties.csv -- details accounts with empty kegs that have not '
 message += 'ordered within the last 30 days. \n'
 message += '2. Balances.csv -- details accounts with balances that are'
 message += ' newly overdue, have been overdue, or are pending a credit hold. \n\n'
+message += 'To open these files in a spreadsheet, either download them and import'
+message += ' directly or click on the file, click "Open With" at the top of your '
+message += 'browser, and select Google Sheets. \n\n'
 message += 'Please address any questions regarding balances to Amelia. If you\'re'
 message += ' experiencing technical problems with this email, please contact Lund.'
 subject = 'Updated Empties and Overdue Balances: %s' % str(today.replace(day=today.day))
