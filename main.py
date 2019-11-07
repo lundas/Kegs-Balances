@@ -29,7 +29,7 @@ email = sendemail.SendEmail()
 
 # Define variables
 # Config
-conf_file ='.s/Kegs-Balances/config_EXAMPLE.yaml' #PATH to config file
+conf_file ='./Kegs-Balances/config_EXAMPLE.yaml' #PATH to config file
 stream = file(conf_file, 'r')
 config = yaml.safe_load(stream)
 
@@ -78,7 +78,7 @@ try:
     # Send emails
     for email_to in emailTo:
         # split emails to get names
-        name = email.split('@')[0]
+        name = email_to.split('@')[0]
         fileToSend = []
         # collect reports for given name
         for f in os.listdir(PATH):

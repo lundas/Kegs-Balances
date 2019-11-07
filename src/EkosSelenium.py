@@ -120,7 +120,7 @@ class EkosSelenium:
 				browser.implicitly_wait(10)
 				# time.sleep(5)	# time.sleeps useful with Chrome
 				browser.switch_to.frame('formFrame_0')
-				# time.sleep(5)
+				time.sleep(10)
 				elem = WebDriverWait(browser, 10).until(
 					EC.element_to_be_clickable((By.CLASS_NAME, 'buttonGroupInner'))
 					)
